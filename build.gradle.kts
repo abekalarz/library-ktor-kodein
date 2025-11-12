@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "2.0.0"
-    id("io.ktor.plugin") version "3.0.0"
+    id("io.ktor.plugin") version "2.3.12"
     application
 }
 
@@ -17,8 +17,8 @@ repositories {
     mavenCentral()
 }
 
-val ktorVersion = "3.0.0"
-val kodeinVersion = "7.22.0"
+val ktorVersion = "2.3.12"
+val kodeinVersion = "7.23.0"
 val junitVersion = "5.11.3"
 val striktVersion = "0.35.1"
 

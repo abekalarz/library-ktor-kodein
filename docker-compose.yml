@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  db:
+    image: mariadb:11
+    container_name: library-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: librarydb
+    ports:
+      - "3306:3306"
+  app:
+    build: .
+    container_name: library-app
+    environment:
+      DB_URL: jdbc:mariadb://db:3306/librarydb
+      DB_USER: root
+      DB_PASS: root
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db

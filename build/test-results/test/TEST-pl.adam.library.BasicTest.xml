@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="pl.adam.library.BasicTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-11-12T12:01:10.951Z" hostname="WL10042630404" time="0.016">
+  <properties/>
+  <testcase name="simple sanity test()" classname="pl.adam.library.BasicTest" time="0.016"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

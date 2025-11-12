@@ -1,0 +1,11 @@
+ext.pathMapper = [:]
+ext.pathMapper.put('C:/Users/abekalarz/AppData/Local/Programs/IntelliJ IDEA Ultimate 2/lib/util_rt.jar', '/tmp/tmp9sxLol/util_rt.jar')
+ext.pathMapper.put('C:/Users/abekalarz/AppData/Local/Programs/IntelliJ IDEA Ultimate 2/lib/external-system-rt.jar', '/tmp/tmp9sxLol/external-system-rt.jar')
+ext.pathMapper.put('C:/Users/abekalarz/AppData/Local/Programs/IntelliJ IDEA Ultimate 2/plugins/gradle/lib/gradle-tooling-extension-api.jar', '/tmp/tmp3DrIVu/gradle-tooling-extension-api.jar')
+ext.pathMapper.put('C:/Users/abekalarz/AppData/Local/Programs/IntelliJ IDEA Ultimate 2/plugins/gradle/lib/gradle-tooling-extension-impl.jar', '/tmp/tmp3DrIVu/gradle-tooling-extension-impl.jar')
+ext.pathMapper.put('C:/Users/abekalarz/AppData/Local/Programs/IntelliJ IDEA Ultimate 2/lib/util_rt.jar', '/tmp/tmp9sxLol/util_rt.jar')
+ext.pathMapper.put('C:/Users/abekalarz/AppData/Local/Programs/IntelliJ IDEA Ultimate 2/lib/external-system-rt.jar', '/tmp/tmp9sxLol/external-system-rt.jar')
+ext.pathMapper.put('C:/Users/abekalarz/AppData/Local/Programs/IntelliJ IDEA Ultimate 2/plugins/gradle/lib/gradle-tooling-extension-api.jar', '/tmp/tmp3DrIVu/gradle-tooling-extension-api.jar')
+ext.pathMapper.put('C:/Users/abekalarz/AppData/Local/Programs/IntelliJ IDEA Ultimate 2/plugins/gradle/lib/gradle-tooling-extension-impl.jar', '/tmp/tmp3DrIVu/gradle-tooling-extension-impl.jar')
+ext.pathMapper.put("<<target java executable path>>", '/home/abekalarz-oec/.jdks/corretto-21.0.6/bin/java')
+ext.mapPath = { path -> pathMapper.get(path) ?: path }

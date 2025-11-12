@@ -17,7 +17,7 @@ import pl.adam.library.db.*
 fun main() {
     embeddedServer(
         factory = Netty,
-        host = "localhost",
+        host = "0.0.0.0",
         port = 8080
     ) {
         install(CallLogging)

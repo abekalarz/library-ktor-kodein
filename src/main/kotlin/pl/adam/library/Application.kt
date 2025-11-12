@@ -4,7 +4,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.plugins.calllogging.*
+import io.ktor.server.plugins.callloging.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.routing.*
 import org.kodein.di.*
@@ -15,7 +15,11 @@ import pl.adam.library.services.*
 import pl.adam.library.db.*
 
 fun main() {
-    embeddedServer(Netty, port = 8080) {
+    embeddedServer(
+        factory = Netty,
+        host = "localhost",
+        port = 8080
+    ) {
         install(CallLogging)
         install(ContentNegotiation) { jackson() }
 

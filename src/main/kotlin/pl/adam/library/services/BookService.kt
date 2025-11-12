@@ -10,6 +10,12 @@ class BookService(private val db: DatabaseFactory) {
             "SELECT * FROM books WHERE title LIKE CONCAT('%', ?, '%')" else "SELECT * FROM books"
         handle.createQuery(sql).apply {
             if (titleFilter != null) bind(0, titleFilter)
-        }.mapToBean(Book::class.java).list()
+        }.map { rs, _ ->
+            Book(
+                id = rs.getInt("id"),
+                title = rs.getString("title"),
+                available = rs.getBoolean("available")
+            )
+        }.list()
     }
 }

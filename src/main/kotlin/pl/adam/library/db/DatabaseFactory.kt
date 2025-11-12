@@ -12,7 +12,9 @@ class DatabaseFactory {
     fun init() {
         val sql = this::class.java.classLoader.getResource("db/schema.sql")!!.readText()
         jdbi.useHandle<Exception> { handle ->
-            handle.connection.createStatement().use { st -> st.execute(sql) }
+            sql.split(";").filter { it.trim().isNotEmpty() }.forEach { statement ->
+                handle.connection.createStatement().use { st -> st.execute(statement) }
+            }
         }
         println("✅ Database initialized")
     }

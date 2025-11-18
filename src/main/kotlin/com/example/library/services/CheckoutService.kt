@@ -1,6 +1,6 @@
-package pl.adam.library.services
+package com.example.library.services
 
-import pl.adam.library.db.DatabaseFactory
+import com.example.library.db.DatabaseFactory
 
 class CheckoutService(private val db: DatabaseFactory) {
     fun checkoutBook(userId: Int, bookId: Int) {

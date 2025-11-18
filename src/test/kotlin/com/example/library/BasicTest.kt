@@ -1,4 +1,4 @@
-package pl.adam.library
+package com.example.library
 
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat

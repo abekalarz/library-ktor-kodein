@@ -1,12 +1,14 @@
-package pl.adam.library.routes
+package com.example.library.routes
 
+import com.example.library.services.BookService
+import com.example.library.services.CheckoutService
+import com.example.library.services.UserService
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
-import pl.adam.library.services.*
 
 data class RegisterUserRequest(val name: String)
 data class CheckoutRequest(val userId: Int, val bookId: Int)

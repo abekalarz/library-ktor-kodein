@@ -6,11 +6,11 @@ plugins {
     application
 }
 
-group = "pl.adam.library"
+group = "com.example.library"
 version = "0.0.1"
 
 application {
-    mainClass.set("pl.adam.library.ApplicationKt")
+    mainClass.set("com.example.library.ApplicationKt")
 }
 
 repositories {

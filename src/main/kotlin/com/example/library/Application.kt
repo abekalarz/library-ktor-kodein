@@ -1,5 +1,6 @@
-package pl.adam.library
+package com.example.library
 
+import com.example.library.db.DatabaseFactory
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.application.*
@@ -10,9 +11,10 @@ import io.ktor.server.routing.*
 import org.kodein.di.*
 import org.kodein.di.ktor.di
 import org.kodein.di.ktor.closestDI
-import pl.adam.library.routes.libraryRoutes
-import pl.adam.library.services.*
-import pl.adam.library.db.*
+import com.example.library.routes.libraryRoutes
+import com.example.library.services.BookService
+import com.example.library.services.CheckoutService
+import com.example.library.services.UserService
 
 fun main() {
     embeddedServer(

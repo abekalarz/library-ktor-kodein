@@ -1,4 +1,4 @@
-package pl.adam.library.db
+package com.example.library.db
 
 import org.jdbi.v3.core.Jdbi
 

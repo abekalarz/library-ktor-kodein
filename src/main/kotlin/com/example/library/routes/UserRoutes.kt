@@ -2,7 +2,9 @@ package com.example.library.routes
 
 import com.example.library.services.BookService
 import com.example.library.services.CheckoutService
+import com.example.library.services.CheckoutResult
 import com.example.library.services.UserService
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.request.*
@@ -36,8 +38,11 @@ fun Route.userRoutes() {
     route("/checkout") {
         post {
             val req = call.receive<CheckoutRequest>()
-            checkoutService.checkoutBook(req.userId, req.bookId)
-            call.respondText("Book checked out successfully!")
+            when (val result = checkoutService.checkoutBook(req.userId, req.bookId)) {
+                is CheckoutResult.Success -> call.respondText(result.message, status = HttpStatusCode.OK)
+                is CheckoutResult.BookNotFound -> call.respondText(result.message, status = HttpStatusCode.NotFound)
+                is CheckoutResult.BookNotAvailable -> call.respondText(result.message, status = HttpStatusCode.Conflict)
+            }
         }
     }
 }

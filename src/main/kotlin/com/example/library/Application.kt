@@ -30,7 +30,7 @@ fun main() {
             bind<DatabaseFactory>() with singleton { DatabaseFactory() }
             bind<UserService>() with singleton { UserService(instance()) }
             bind<BookService>() with singleton { BookService(instance()) }
-            bind<CheckoutService>() with singleton { CheckoutService(instance()) }
+            bind<CheckoutService>() with singleton { CheckoutService(instance(), instance()) }
         }
 
         routing {

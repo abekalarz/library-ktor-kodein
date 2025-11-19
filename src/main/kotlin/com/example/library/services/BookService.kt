@@ -26,4 +26,18 @@ class BookService(private val db: DatabaseFactory) {
             .mapTo(Int::class.java)
             .one()
     }
+    
+    fun getBookById(bookId: Int): Book? = db.jdbi.withHandle<Book?, Exception> { handle ->
+        handle.createQuery("SELECT * FROM books WHERE id = ?")
+            .bind(0, bookId)
+            .map { rs, _ ->
+                Book(
+                    id = rs.getInt("id"),
+                    title = rs.getString("title"),
+                    available = rs.getBoolean("available")
+                )
+            }
+            .findOne()
+            .orElse(null)
+    }
 }

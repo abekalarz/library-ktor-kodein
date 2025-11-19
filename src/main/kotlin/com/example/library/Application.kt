@@ -11,7 +11,8 @@ import io.ktor.server.routing.*
 import org.kodein.di.*
 import org.kodein.di.ktor.di
 import org.kodein.di.ktor.closestDI
-import com.example.library.routes.libraryRoutes
+import com.example.library.routes.userRoutes
+import com.example.library.routes.adminRoutes
 import com.example.library.services.BookService
 import com.example.library.services.CheckoutService
 import com.example.library.services.UserService
@@ -32,7 +33,10 @@ fun main() {
             bind<CheckoutService>() with singleton { CheckoutService(instance()) }
         }
 
-        routing { libraryRoutes() }
+        routing {
+            userRoutes()
+            adminRoutes()
+        }
 
         environment.monitor.subscribe(ApplicationStarted) { application ->
             val db = application.closestDI().direct.instance<DatabaseFactory>()

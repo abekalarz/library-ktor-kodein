@@ -12,9 +12,8 @@ import org.kodein.di.ktor.closestDI
 
 data class RegisterUserRequest(val name: String)
 data class CheckoutRequest(val userId: Int, val bookId: Int)
-data class AddBookRequest(val title: String)
 
-fun Route.libraryRoutes() {
+fun Route.userRoutes() {
     val userService by closestDI().instance<UserService>()
     val bookService by closestDI().instance<BookService>()
     val checkoutService by closestDI().instance<CheckoutService>()
@@ -31,11 +30,6 @@ fun Route.libraryRoutes() {
         get {
             val title = call.request.queryParameters["title"]
             call.respond(bookService.listBooks(title))
-        }
-        post {
-            val req = call.receive<AddBookRequest>()
-            val bookId = bookService.addBook(req.title)
-            call.respondText("Book added with ID: $bookId")
         }
     }
 

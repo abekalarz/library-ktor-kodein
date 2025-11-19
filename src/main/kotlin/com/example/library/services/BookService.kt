@@ -18,4 +18,12 @@ class BookService(private val db: DatabaseFactory) {
             )
         }.list()
     }
+    
+    fun addBook(title: String): Int = db.jdbi.withHandle<Int, Exception> { handle ->
+        handle.createUpdate("INSERT INTO books (title, available) VALUES (?, true)")
+            .bind(0, title)
+            .executeAndReturnGeneratedKeys("id")
+            .mapTo(Int::class.java)
+            .one()
+    }
 }

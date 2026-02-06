@@ -3,6 +3,7 @@ package com.example.library.routes
 import com.example.library.services.BookService
 import com.example.library.services.CheckoutService
 import com.example.library.services.CheckoutResult
+import com.example.library.services.ReturnResult
 import com.example.library.services.UserService
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -14,6 +15,7 @@ import org.kodein.di.ktor.closestDI
 
 data class RegisterUserRequest(val name: String)
 data class CheckoutRequest(val userId: Int, val bookId: Int)
+data class ReturnRequest(val userId: Int, val bookId: Int)
 
 fun Route.userRoutes() {
     val userService by closestDI().instance<UserService>()
@@ -42,6 +44,17 @@ fun Route.userRoutes() {
                 is CheckoutResult.Success -> call.respondText(result.message, status = HttpStatusCode.OK)
                 is CheckoutResult.BookNotFound -> call.respondText(result.message, status = HttpStatusCode.NotFound)
                 is CheckoutResult.BookNotAvailable -> call.respondText(result.message, status = HttpStatusCode.Conflict)
+            }
+        }
+    }
+
+    route("/return") {
+        post {
+            val req = call.receive<ReturnRequest>()
+            when (val result = checkoutService.returnBook(req.userId, req.bookId)) {
+                is ReturnResult.Success -> call.respondText(result.message, status = HttpStatusCode.OK)
+                is ReturnResult.BookNotFound -> call.respondText(result.message, status = HttpStatusCode.NotFound)
+                is ReturnResult.BookNotCheckedOut -> call.respondText(result.message, status = HttpStatusCode.BadRequest)
             }
         }
     }

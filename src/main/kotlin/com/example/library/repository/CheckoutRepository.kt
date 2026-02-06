@@ -14,4 +14,26 @@ class CheckoutRepository(
         }
     }
 
+    fun isBookCheckedOutByUser(userId: Int, bookId: Int): Boolean {
+        return db.jdbi.withHandle<Boolean, Exception> { handle ->
+            val count = handle.createQuery(
+                "SELECT COUNT(*) FROM checkouts WHERE user_id = ? AND book_id = ?"
+            )
+                .bind(0, userId)
+                .bind(1, bookId)
+                .mapTo(Int::class.java)
+                .one()
+            count > 0
+        }
+    }
+
+    fun returnBook(userId: Int, bookId: Int) {
+        db.jdbi.useHandle<Exception> { handle ->
+            handle.begin()
+            handle.execute("UPDATE books SET available = TRUE WHERE id = ?", bookId)
+            handle.execute("DELETE FROM checkouts WHERE user_id = ? AND book_id = ?", userId, bookId)
+            handle.commit()
+        }
+    }
+
 }

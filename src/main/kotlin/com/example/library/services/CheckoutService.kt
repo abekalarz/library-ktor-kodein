@@ -16,13 +16,6 @@ class CheckoutService(private val checkoutRepository: CheckoutRepository, privat
         if (!book.available) {
             return CheckoutResult.BookNotAvailable("Book '${book.title}' is currently checked out and not available")
         }
-        
-//        db.jdbi.useHandle<Exception> { handle ->
-//            handle.begin()
-//            handle.execute("UPDATE books SET available = FALSE WHERE id = ?", bookId)
-//            handle.execute("INSERT INTO checkouts (user_id, book_id) VALUES (?, ?)", userId, bookId)
-//            handle.commit()
-//        }
 
         checkoutRepository.checkoutBook(userId, bookId)
         return CheckoutResult.Success("Book '${book.title}' checked out successfully!")

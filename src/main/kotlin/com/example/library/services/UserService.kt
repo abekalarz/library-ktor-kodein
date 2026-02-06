@@ -1,11 +1,11 @@
 package com.example.library.services
 
-import com.example.library.db.DatabaseFactory
+import com.example.library.repository.UserRepository
 
-class UserService(private val db: DatabaseFactory) {
+class UserService(
+    private val userRepository: UserRepository
+) {
     fun registerUser(name: String) {
-        db.jdbi.useHandle<Exception> { handle ->
-            handle.execute("INSERT INTO users (name) VALUES (?)", name)
-        }
+        userRepository.registerUser(name)
     }
 }

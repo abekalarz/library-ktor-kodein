@@ -1,6 +1,9 @@
 package com.example.library
 
 import com.example.library.db.DatabaseFactory
+import com.example.library.repository.BookRepository
+import com.example.library.repository.CheckoutRepository
+import com.example.library.repository.UserRepository
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.application.*
@@ -17,6 +20,7 @@ import com.example.library.services.BookService
 import com.example.library.services.CheckoutService
 import com.example.library.services.UserService
 
+
 fun main() {
     embeddedServer(
         factory = Netty,
@@ -27,9 +31,12 @@ fun main() {
         install(ContentNegotiation) { jackson() }
 
         di {
+            bind<BookRepository>() with singleton { BookRepository(instance()) }
+            bind<UserRepository>() with singleton { UserRepository(instance()) }
+            bind<CheckoutRepository>() with singleton { CheckoutRepository(instance()) }
             bind<DatabaseFactory>() with singleton { DatabaseFactory() }
             bind<UserService>() with singleton { UserService(instance()) }
-            bind<BookService>() with singleton { BookService(instance()) }
+            bind<BookService>() with singleton { BookService(instance()) } // Always returns this instance -? "val bookService by closestDI().instance<BookService>()"
             bind<CheckoutService>() with singleton { CheckoutService(instance(), instance()) }
         }
 

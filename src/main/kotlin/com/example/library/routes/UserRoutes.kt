@@ -26,6 +26,20 @@ fun Route.userRoutes() {
             userService.registerUser(req.name)
             call.respondText("User registered: ${req.name}")
         }
+
+        get("/{userId}") {
+            val userId = call.parameters["userId"]?.toIntOrNull()
+            if (userId == null) {
+                call.respondText("Invalid user ID", status = HttpStatusCode.BadRequest)
+            } else {
+                val user = userService.getUser(userId)
+                if (user == null) {
+                    call.respondText("User was not found", status = HttpStatusCode.NotFound)
+                } else {
+                    call.respond(user)
+                }
+            }
+        }
     }
 
     route("/books") {

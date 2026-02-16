@@ -25,8 +25,8 @@ fun Route.userRoutes() {
     route("/users") {
         post {
             val req = call.receive<RegisterUserRequest>()
-            userService.registerUser(req.name)
-            call.respondText("User registered: ${req.name}")
+            val userId = userService.registerUser(req.name)
+            call.respondText("User registered: ${req.name} (ID: $userId)")
         }
 
         get("/{userId}") {
@@ -58,6 +58,7 @@ fun Route.userRoutes() {
                 is CheckoutResult.Success -> call.respondText(result.message, status = HttpStatusCode.OK)
                 is CheckoutResult.BookNotFound -> call.respondText(result.message, status = HttpStatusCode.NotFound)
                 is CheckoutResult.BookNotAvailable -> call.respondText(result.message, status = HttpStatusCode.Conflict)
+                is CheckoutResult.UserNotFound -> call.respondText(result.message, status = HttpStatusCode.NotFound)
             }
         }
     }

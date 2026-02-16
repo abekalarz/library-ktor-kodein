@@ -10,8 +10,8 @@ data class User(
 class UserService(
     private val userRepository: UserRepository
 ) {
-    fun registerUser(name: String) {
-        userRepository.registerUser(name)
+    fun registerUser(name: String): Int {
+        return userRepository.registerUser(name)
     }
 
     fun getUser(userId: Int): User? {

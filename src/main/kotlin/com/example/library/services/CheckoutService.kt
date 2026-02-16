@@ -1,6 +1,7 @@
 package com.example.library.services
 
 import com.example.library.repository.CheckoutRepository
+import com.example.library.repository.CheckoutRepositoryResult
 
 sealed class CheckoutResult {
     data class Success(val message: String) : CheckoutResult()
@@ -16,15 +17,14 @@ sealed class ReturnResult {
 
 class CheckoutService(private val checkoutRepository: CheckoutRepository, private val bookService: BookService) {
     fun checkoutBook(userId: Int, bookId: Int): CheckoutResult {
-        val book = bookService.getBookById(bookId)
-            ?: return CheckoutResult.BookNotFound("Book with ID $bookId does not exist in our collection")
-
-        if (!book.available) {
-            return CheckoutResult.BookNotAvailable("Book '${book.title}' is currently checked out and not available")
+        return when (val result = checkoutRepository.checkoutBook(userId, bookId)) {
+            is CheckoutRepositoryResult.Success -> 
+                CheckoutResult.Success("Book '${result.book.title}' checked out successfully!")
+            is CheckoutRepositoryResult.BookNotFound -> 
+                CheckoutResult.BookNotFound("Book with ID $bookId does not exist in our collection")
+            is CheckoutRepositoryResult.BookNotAvailable -> 
+                CheckoutResult.BookNotAvailable("Book is currently checked out and not available")
         }
-
-        checkoutRepository.checkoutBook(userId, bookId)
-        return CheckoutResult.Success("Book '${book.title}' checked out successfully!")
     }
 
     fun returnBook(userId: Int, bookId: Int): ReturnResult {

@@ -16,7 +16,11 @@ sealed class ReturnResult {
     data class BookNotCheckedOut(val message: String) : ReturnResult()
 }
 
-class CheckoutService(private val checkoutRepository: CheckoutRepository, private val bookService: BookService, private val userService: UserService) {
+class CheckoutService(
+    private val checkoutRepository: CheckoutRepository,
+    private val bookService: BookService,
+    private val userService: UserService
+) {
     fun checkoutBook(userId: Int, bookId: Int): CheckoutResult {
         if (userService.getUser(userId) == null) {
             return CheckoutResult.UserNotFound("User with ID $userId does not exist")

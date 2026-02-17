@@ -43,6 +43,7 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
     testImplementation("io.strikt:strikt-core:$striktVersion")
+    testImplementation("io.mockk:mockk:1.14.7")
 }
 
 tasks.withType<Test> {

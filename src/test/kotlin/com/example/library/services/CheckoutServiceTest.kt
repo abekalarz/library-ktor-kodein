@@ -29,7 +29,7 @@ class CheckoutServiceTest {
         val result = checkoutService.checkoutBook(userId, 1)
 
         expectThat(result).isA<UserNotFound>()
-        expectThat((result as UserNotFound).message).isEqualTo("User with ID $userId does not :D exist")
+        expectThat((result as UserNotFound).message).isEqualTo("User with ID $userId does not exist")
     }
 
     // checkoutBook success

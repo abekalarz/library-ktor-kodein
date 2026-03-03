@@ -5,6 +5,8 @@ import com.example.library.services.CheckoutService
 import com.example.library.services.CheckoutResult
 import com.example.library.services.ReturnResult
 import com.example.library.services.UserService
+import com.example.library.api.ErrorResponse
+import com.example.library.validation.Validators
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -25,6 +27,17 @@ fun Route.userRoutes() {
     route("/users") {
         post {
             val req = call.receive<RegisterUserRequest>()
+
+            val errors = listOfNotNull(
+                Validators.notBlank("name", req.name),
+                Validators.minLength("name", req.name, 2)
+            )
+
+            if (errors.isNotEmpty()) {
+                call.respondValidationError(errors)
+                return@post
+            }
+
             val userId = userService.registerUser(req.name)
             call.respondText("User registered: ${req.name} (ID: $userId)")
         }
@@ -54,6 +67,17 @@ fun Route.userRoutes() {
     route("/checkout") {
         post {
             val req = call.receive<CheckoutRequest>()
+
+            val errors = listOfNotNull(
+                Validators.positive("userId", req.userId),
+                Validators.positive("bookId", req.bookId)
+            )
+
+            if (errors.isNotEmpty()) {
+                call.respondValidationError(errors)
+                return@post
+            }
+
             when (val result = checkoutService.checkoutBook(req.userId, req.bookId)) {
                 is CheckoutResult.Success -> call.respondText(result.message, status = HttpStatusCode.OK)
                 is CheckoutResult.BookNotFound -> call.respondText(result.message, status = HttpStatusCode.NotFound)
@@ -66,6 +90,17 @@ fun Route.userRoutes() {
     route("/return") {
         post {
             val req = call.receive<ReturnRequest>()
+
+            val errors = listOfNotNull(
+                Validators.positive("userId", req.userId),
+                Validators.positive("bookId", req.bookId)
+            )
+
+            if (errors.isNotEmpty()) {
+                call.respondValidationError(errors)
+                return@post
+            }
+
             when (val result = checkoutService.returnBook(req.userId, req.bookId)) {
                 is ReturnResult.Success -> call.respondText(result.message, status = HttpStatusCode.OK)
                 is ReturnResult.BookNotFound -> call.respondText(result.message, status = HttpStatusCode.NotFound)

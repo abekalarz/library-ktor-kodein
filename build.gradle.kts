@@ -29,6 +29,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization-jackson-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-call-logging-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-status-pages-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-cors-jvm:$ktorVersion")
 
     implementation("org.kodein.di:kodein-di:$kodeinVersion")
     implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:$kodeinVersion")

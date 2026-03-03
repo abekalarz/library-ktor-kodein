@@ -8,8 +8,10 @@ class UserRepository (private val db: DatabaseFactory) {
         require(name.isNotBlank()) { "User name cannot be empty" }
         
         return db.jdbi.withHandle<Int, Exception> { handle ->
-            handle.execute("INSERT INTO users (name) VALUES (:name)", mapOf("name" to name))
-            handle.createQuery("SELECT last_insert_rowid() as id")
+            handle.createUpdate("INSERT INTO users (name) VALUES (:name)")
+                .bind("name", name)
+                .execute()
+            handle.createQuery("SELECT LAST_INSERT_ID() as id")
                 .mapTo(Int::class.java)
                 .one()
         }

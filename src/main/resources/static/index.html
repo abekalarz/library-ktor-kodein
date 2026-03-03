@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Backend Tester</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Library Backend Tester</h1>
+        <p class="subtitle">Quick testing interface for your Ktor backend</p>
+        
+        <div class="status">
+            Backend Status: <span id="status" class="status-unknown">Checking...</span>
+        </div>
+
+        <div class="section">
+            <h2>📖 Books</h2>
+            <button onclick="loadBooks()">Load All Books</button>
+            <button onclick="showAddBookForm()">Add New Book</button>
+            <div id="books-form" class="form-container" style="display:none;">
+                <input type="text" id="book-title" placeholder="Book Title">
+                <button onclick="addBook()">Create</button>
+                <button onclick="hideAddBookForm()">Cancel</button>
+            </div>
+            <div id="books-list" class="results"></div>
+        </div>
+
+        <div class="section">
+            <h2>👤 User Management</h2>
+            <div class="subsection">
+                <h3>Register New User</h3>
+                <input type="text" id="user-name" placeholder="User Name">
+                <button onclick="registerUser()">Register</button>
+                <div id="user-registration-result" class="results"></div>
+            </div>
+            <div class="subsection">
+                <h3>Get User Details</h3>
+                <input type="number" id="user-id-query" placeholder="User ID">
+                <button onclick="getUser()">Fetch User</button>
+                <div id="user-details" class="results"></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🛒 Checkouts & Returns</h2>
+            <div class="subsection">
+                <h3>Checkout Book</h3>
+                <input type="number" id="checkout-user-id" placeholder="User ID">
+                <input type="number" id="checkout-book-id" placeholder="Book ID">
+                <button onclick="checkoutBook()">Checkout</button>
+            </div>
+            <div class="subsection">
+                <h3>Return Book</h3>
+                <input type="number" id="return-user-id" placeholder="User ID">
+                <input type="number" id="return-book-id" placeholder="Book ID">
+                <button onclick="returnBook()">Return</button>
+            </div>
+            <div id="checkout-result" class="results"></div>
+        </div>
+
+        <div class="section">
+            <h2>🔧 Custom Request</h2>
+            <div class="custom-request">
+                <select id="method">
+                    <option>GET</option>
+                    <option>POST</option>
+                    <option>PUT</option>
+                    <option>DELETE</option>
+                </select>
+                <input type="text" id="endpoint" placeholder="/books" value="/books">
+                <textarea id="body" placeholder='{"key": "value"}' rows="3"></textarea>
+                <button onclick="sendCustomRequest()">Send</button>
+            </div>
+            <div id="custom-response" class="results"></div>
+        </div>
+
+        <div class="logs">
+            <h3>📋 Logs</h3>
+            <div id="logs" class="log-container"></div>
+            <button onclick="clearLogs()">Clear Logs</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

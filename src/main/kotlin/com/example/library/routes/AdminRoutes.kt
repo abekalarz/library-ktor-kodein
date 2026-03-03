@@ -1,6 +1,7 @@
 package com.example.library.routes
 
 import com.example.library.services.BookService
+import com.example.library.validation.Validators
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.request.*
@@ -16,6 +17,17 @@ fun Route.adminRoutes() {
     route("/admin/books") {
         post {
             val req = call.receive<AddBookRequest>()
+
+            val errors = listOfNotNull(
+                Validators.notBlank("title", req.title),
+                Validators.minLength("title", req.title, 3)
+            )
+
+            if (errors.isNotEmpty()) {
+                call.respondValidationError(errors)
+                return@post
+            }
+
             val bookId = bookService.addBook(req.title)
             call.respondText("Book added with ID: $bookId")
         }

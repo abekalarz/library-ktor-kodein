@@ -39,8 +39,22 @@ class CheckoutServiceTest {
         }
 
         @Test
+        fun `checkoutBook - when book already checked out by user then return AlreadyCheckedOut`() {
+            every { userService.getUser(userId) } returns User(userId, "Sample User")
+            every { checkoutRepository.isBookCheckedOutByUser(userId, bookId) } returns true
+
+            val result = checkoutService.checkoutBook(userId, bookId)
+
+            expectThat(result).isA<CheckoutResult.AlreadyCheckedOut>()
+            expectThat((result as CheckoutResult.AlreadyCheckedOut).message)
+                .isEqualTo("User $userId has already checked out this book")
+        }
+
+        @Test
         fun `checkoutBook - repository result success then return success`() {
             every { userService.getUser(userId) } returns User(userId, "Sample User")
+            every { checkoutRepository.isBookCheckedOutByUser(userId, bookId) } returns false
+            every { checkoutRepository.getCheckedOutBooksCount(userId) } returns 0
             every { checkoutRepository.checkoutBook(userId, bookId) } returns
                     CheckoutRepositoryResult.Success(book)
 
@@ -54,6 +68,8 @@ class CheckoutServiceTest {
         @Test
         fun `checkoutBook - when book is not found then return BookNotFound`() {
             every { userService.getUser(userId) } returns User(userId, "Sample User")
+            every { checkoutRepository.isBookCheckedOutByUser(userId, bookId) } returns false
+            every { checkoutRepository.getCheckedOutBooksCount(userId) } returns 0
             every { checkoutRepository.checkoutBook(userId, bookId) } returns
                     CheckoutRepositoryResult.BookNotFound
 
@@ -66,6 +82,8 @@ class CheckoutServiceTest {
         @Test
         fun `checkoutBook - when book is not available then return BookNotAvailable`() {
             every { userService.getUser(userId) } returns User(userId, "Sample User")
+            every { checkoutRepository.isBookCheckedOutByUser(userId, bookId) } returns false
+            every { checkoutRepository.getCheckedOutBooksCount(userId) } returns 0
             every { checkoutRepository.checkoutBook(userId, bookId) } returns
                     CheckoutRepositoryResult.BookNotAvailable
 
@@ -73,6 +91,19 @@ class CheckoutServiceTest {
             expectThat(result).isA<CheckoutResult.BookNotAvailable>()
             expectThat((result as CheckoutResult.BookNotAvailable).message)
                 .isEqualTo("Book is currently checked out and not available")
+        }
+
+        @Test
+        fun `checkoutBook - when user reached checkout limit then return CheckoutLimitExceeded`() {
+            every { userService.getUser(userId) } returns User(userId, "Sample User")
+            every { checkoutRepository.isBookCheckedOutByUser(userId, bookId) } returns false
+            every { checkoutRepository.getCheckedOutBooksCount(userId) } returns 5
+
+            val result = checkoutService.checkoutBook(userId, bookId)
+
+            expectThat(result).isA<CheckoutResult.CheckoutLimitExceeded>()
+            expectThat((result as CheckoutResult.CheckoutLimitExceeded).message)
+                .isEqualTo("User has reached the maximum limit of 5 checked out books")
         }
     }
 

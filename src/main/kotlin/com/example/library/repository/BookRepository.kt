@@ -41,4 +41,12 @@ class BookRepository(
             .findOne()
             .orElse(null)
     }
+
+    fun deleteBook(bookId: Int) {
+        db.jdbi.useHandle<Exception> { handle ->
+            handle.createUpdate("DELETE FROM books WHERE id = ?")
+                .bind(0, bookId)
+                .execute()
+        }
+    }
 }

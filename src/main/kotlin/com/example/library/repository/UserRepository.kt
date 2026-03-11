@@ -31,4 +31,12 @@ class UserRepository (private val db: DatabaseFactory) {
                 .orElse(null)
         }
     }
+
+    fun deleteUser(userId: Int) {
+        db.jdbi.useHandle<Exception> { handle ->
+            handle.createUpdate("DELETE FROM users WHERE id = :userId")
+                .bind("userId", userId)
+                .execute()
+        }
+    }
 }

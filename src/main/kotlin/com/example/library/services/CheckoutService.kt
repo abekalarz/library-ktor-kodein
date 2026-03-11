@@ -8,6 +8,8 @@ sealed class CheckoutResult {
     data class BookNotFound(val message: String) : CheckoutResult()
     data class BookNotAvailable(val message: String) : CheckoutResult()
     data class UserNotFound(val message: String) : CheckoutResult()
+    data class AlreadyCheckedOut(val message: String) : CheckoutResult()
+    data class CheckoutLimitExceeded(val message: String) : CheckoutResult()
 }
 
 sealed class ReturnResult {
@@ -21,9 +23,21 @@ class CheckoutService(
     private val bookService: BookService,
     private val userService: UserService
 ) {
+    companion object {
+        const val MAX_CHECKOUT_LIMIT = 5
+    }
+
     fun checkoutBook(userId: Int, bookId: Int): CheckoutResult {
         if (userService.getUser(userId) == null) {
             return CheckoutResult.UserNotFound("User with ID $userId does not exist")
+        }
+        
+        if (checkoutRepository.isBookCheckedOutByUser(userId, bookId)) {
+            return CheckoutResult.AlreadyCheckedOut("User $userId has already checked out this book")
+        }
+
+        if (checkoutRepository.getCheckedOutBooksCount(userId) >= MAX_CHECKOUT_LIMIT) {
+            return CheckoutResult.CheckoutLimitExceeded("User has reached the maximum limit of $MAX_CHECKOUT_LIMIT checked out books")
         }
         
         return when (val result = checkoutRepository.checkoutBook(userId, bookId)) {

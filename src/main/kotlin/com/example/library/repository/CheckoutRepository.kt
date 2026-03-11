@@ -56,6 +56,17 @@ class CheckoutRepository(
         }
     }
 
+    fun getCheckedOutBooksCount(userId: Int): Int {
+        return db.jdbi.withHandle<Int, Exception> { handle ->
+            handle.createQuery(
+                "SELECT COUNT(*) FROM checkouts WHERE user_id = :userId"
+            )
+                .bind("userId", userId)
+                .mapTo(Int::class.java)
+                .one()
+        }
+    }
+
     fun returnBook(userId: Int, bookId: Int) {
         db.jdbi.useHandle<Exception> { handle ->
             handle.begin()

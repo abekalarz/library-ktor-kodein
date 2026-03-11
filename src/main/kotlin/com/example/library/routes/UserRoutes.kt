@@ -83,6 +83,8 @@ fun Route.userRoutes() {
                 is CheckoutResult.BookNotFound -> call.respondText(result.message, status = HttpStatusCode.NotFound)
                 is CheckoutResult.BookNotAvailable -> call.respondText(result.message, status = HttpStatusCode.Conflict)
                 is CheckoutResult.UserNotFound -> call.respondText(result.message, status = HttpStatusCode.NotFound)
+                is CheckoutResult.AlreadyCheckedOut -> call.respondText(result.message, status = HttpStatusCode.Conflict)
+                is CheckoutResult.CheckoutLimitExceeded -> call.respondText(result.message, status = HttpStatusCode.BadRequest)
             }
         }
     }

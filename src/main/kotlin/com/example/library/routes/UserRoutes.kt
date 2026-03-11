@@ -5,6 +5,7 @@ import com.example.library.services.CheckoutService
 import com.example.library.services.CheckoutResult
 import com.example.library.services.ReturnResult
 import com.example.library.services.UserService
+import com.example.library.services.DeleteUserResult
 import com.example.library.api.ErrorResponse
 import com.example.library.validation.Validators
 import io.ktor.http.*
@@ -53,6 +54,25 @@ fun Route.userRoutes() {
                 } else {
                     call.respond(user)
                 }
+            }
+        }
+
+        delete("/{userId}") {
+            val userId = call.parameters["userId"]?.toIntOrNull()
+
+            val errors = listOfNotNull(
+                Validators.positive("userId", userId)
+            )
+
+            if (errors.isNotEmpty()) {
+                call.respondValidationError(errors)
+                return@delete
+            }
+
+            when (userService.deleteUser(userId!!)) {
+                is DeleteUserResult.Success -> call.respondText("User $userId deleted successfully")
+                is DeleteUserResult.UserNotFound -> call.respondText("User with ID $userId does not exist", status = HttpStatusCode.NotFound)
+                is DeleteUserResult.HasActiveCheckouts -> call.respondText("Cannot delete user with active checkouts", status = HttpStatusCode.Conflict)
             }
         }
     }

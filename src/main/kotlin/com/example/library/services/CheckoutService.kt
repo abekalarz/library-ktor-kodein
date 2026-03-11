@@ -26,7 +26,7 @@ class CheckoutService(
     companion object {
         const val MAX_CHECKOUT_LIMIT = 5
     }
-
+    // TODO Dude, you forgot about possibility to checkout list of books - then this MAX_CHECKOUT_LIMIT is totally obsolete ! :D
     fun checkoutBook(userId: Int, bookId: Int): CheckoutResult {
         if (userService.getUser(userId) == null) {
             return CheckoutResult.UserNotFound("User with ID $userId does not exist")

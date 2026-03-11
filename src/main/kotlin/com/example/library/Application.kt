@@ -11,6 +11,7 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.routing.*
+import io.ktor.http.*
 import org.kodein.di.*
 import org.kodein.di.ktor.di
 import org.kodein.di.ktor.closestDI
@@ -19,6 +20,8 @@ import com.example.library.routes.adminRoutes
 import com.example.library.services.BookService
 import com.example.library.services.CheckoutService
 import com.example.library.services.UserService
+import io.ktor.server.plugins.cors.routing.CORS
+import io.ktor.server.http.content.*
 
 
 fun main() {
@@ -29,6 +32,14 @@ fun main() {
     ) {
         install(CallLogging)
         install(ContentNegotiation) { jackson() }
+        install(CORS) {
+            allowHost("localhost:8080")
+            allowHost("127.0.0.1:8080")
+            allowHeader(HttpHeaders.ContentType)
+            allowMethod(HttpMethod.Get)
+            allowMethod(HttpMethod.Post)
+            allowMethod(HttpMethod.Options)
+        }
 
         di {
             bind<BookRepository>() with singleton { BookRepository(instance()) }
@@ -43,6 +54,7 @@ fun main() {
         routing {
             userRoutes()
             adminRoutes()
+            staticResources("", "static")
         }
 
         environment.monitor.subscribe(ApplicationStarted) { application ->

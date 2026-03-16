@@ -83,10 +83,72 @@ function displayResults(elementId, result) {
     el.innerHTML = `<pre>${JSON.stringify(result.data, null, 2)}</pre>`;
 }
 
+function createDeleteButton(id, type) {
+    const button = document.createElement('button');
+    button.textContent = `🗑️ Delete`;
+    button.onclick = () => confirmDelete(id, type);
+    button.style.background = '#dc3545';
+    button.style.marginLeft = '10px';
+    return button;
+}
+
+async function confirmDelete(id, type) {
+    const msg = type === 'user' 
+        ? `Are you sure you want to delete user #${id}? This cannot be undone.`
+        : `Are you sure you want to delete book #${id}? This cannot be undone.`;
+    
+    if (!confirm(msg)) {
+        return;
+    }
+
+    const endpoint = type === 'user' ? `/users/${id}` : `/admin/books/${id}`;
+    const result = await apiCall('DELETE', endpoint);
+    
+    if (result.success) {
+        log(`✅ ${type === 'user' ? 'User' : 'Book'} deleted successfully`);
+        if (type === 'user') {
+            loadAllUsers();
+            document.getElementById('user-id-query').value = '';
+            document.getElementById('user-details').innerHTML = '';
+        } else {
+            loadBooks();
+        }
+    }
+}
+
 // ============= Books =============
 async function loadBooks() {
     const result = await apiCall('GET', '/books');
-    displayResults('books-list', result);
+    if (result.success && Array.isArray(result.data)) {
+        const booksDiv = document.getElementById('books-list');
+        booksDiv.innerHTML = '';
+        const table = document.createElement('table');
+        table.style.cssText = 'width: 100%; border-collapse: collapse; margin-top: 10px;';
+        
+        result.data.forEach(book => {
+            const row = document.createElement('tr');
+            row.style.cssText = 'border-bottom: 1px solid #ddd; padding: 10px 0;';
+            const idCell = document.createElement('td');
+            idCell.style.cssText = 'padding: 10px; text-align: left;';
+            idCell.textContent = `#${book.id}`;
+            const titleCell = document.createElement('td');
+            titleCell.style.cssText = 'padding: 10px; text-align: left;';
+            titleCell.textContent = book.title;
+            const actionCell = document.createElement('td');
+            actionCell.style.cssText = 'padding: 10px; text-align: right;';
+            
+            const deleteBtn = createDeleteButton(book.id, 'book');
+            actionCell.appendChild(deleteBtn);
+            
+            row.appendChild(idCell);
+            row.appendChild(titleCell);
+            row.appendChild(actionCell);
+            table.appendChild(row);
+        });
+        booksDiv.appendChild(table);
+    } else {
+        displayResults('books-list', result);
+    }
 }
 
 function showAddBookForm() {
@@ -158,7 +220,27 @@ async function getUser() {
     }
 
     const result = await apiCall('GET', `/users/${userId}`);
-    displayResults('user-details', result);
+    if (result.success) {
+        const detailsDiv = document.getElementById('user-details');
+        detailsDiv.innerHTML = `<pre>${JSON.stringify(result.data, null, 2)}</pre>`;
+        
+        const deleteBtn = createDeleteButton(userId, 'user');
+        detailsDiv.appendChild(deleteBtn);
+    } else {
+        displayResults('user-details', result);
+    }
+}
+
+async function loadAllUsers() {
+    const result = await apiCall('GET', '/books');
+    const allUsersDiv = document.getElementById('all-users-list');
+    
+    if (!result.success) {
+        allUsersDiv.innerHTML = '<p class="error">Could not load users. Currently, users are not directly listed via API - use "Get User Details" to fetch individual users by ID.</p>';
+        return;
+    }
+    
+    allUsersDiv.innerHTML = '<p class="info">⚠️ User listing endpoint not available. Please use "Get User Details" section to fetch users by their ID.</p>';
 }
 
 // ============= Checkouts & Returns =============

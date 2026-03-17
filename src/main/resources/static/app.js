@@ -232,15 +232,48 @@ async function getUser() {
 }
 
 async function loadAllUsers() {
-    const result = await apiCall('GET', '/books');
+    const result = await apiCall('GET', '/users');
     const allUsersDiv = document.getElementById('all-users-list');
     
-    if (!result.success) {
-        allUsersDiv.innerHTML = '<p class="error">Could not load users. Currently, users are not directly listed via API - use "Get User Details" to fetch individual users by ID.</p>';
+    if (!result.success || !Array.isArray(result.data)) {
+        allUsersDiv.innerHTML = '<p class="error">Could not load users</p>';
         return;
     }
+
+    if (result.data.length === 0) {
+        allUsersDiv.innerHTML = '<p class="info">No users found</p>';
+        return;
+    }
+
+    allUsersDiv.innerHTML = '';
+    const table = document.createElement('table');
+    table.style.cssText = 'width: 100%; border-collapse: collapse; margin-top: 10px;';
     
-    allUsersDiv.innerHTML = '<p class="info">⚠️ User listing endpoint not available. Please use "Get User Details" section to fetch users by their ID.</p>';
+    result.data.forEach(user => {
+        const row = document.createElement('tr');
+        row.style.cssText = 'border-bottom: 1px solid #ddd; padding: 10px 0;';
+        
+        const idCell = document.createElement('td');
+        idCell.style.cssText = 'padding: 10px; text-align: left; width: 50px;';
+        idCell.textContent = `#${user.userId}`;
+        
+        const nameCell = document.createElement('td');
+        nameCell.style.cssText = 'padding: 10px; text-align: left; flex-grow: 1;';
+        nameCell.textContent = user.name;
+        
+        const actionCell = document.createElement('td');
+        actionCell.style.cssText = 'padding: 10px; text-align: right;';
+        
+        const deleteBtn = createDeleteButton(user.userId, 'user');
+        actionCell.appendChild(deleteBtn);
+        
+        row.appendChild(idCell);
+        row.appendChild(nameCell);
+        row.appendChild(actionCell);
+        table.appendChild(row);
+    });
+    
+    allUsersDiv.appendChild(table);
 }
 
 // ============= Checkouts & Returns =============
@@ -301,5 +334,5 @@ async function sendCustomRequest() {
 // ============= Init =============
 window.addEventListener('load', () => {
     checkBackendStatus();
-    setInterval(checkBackendStatus, 5000); // Check every 5 seconds
+    setInterval(checkBackendStatus, 10000); // Check every 10 seconds
 });

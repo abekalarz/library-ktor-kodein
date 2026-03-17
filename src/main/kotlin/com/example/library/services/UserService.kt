@@ -24,6 +24,10 @@ class UserService(
         return userRepository.getUserById(userId)
     }
 
+    fun getAllUsers(): List<User> {
+        return userRepository.getAllUsers()
+    }
+
     fun deleteUser(userId: Int): DeleteUserResult {
         if (userRepository.getUserById(userId) == null) {
             return DeleteUserResult.UserNotFound

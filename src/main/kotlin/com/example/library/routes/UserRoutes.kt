@@ -26,6 +26,11 @@ fun Route.userRoutes() {
     val checkoutService by closestDI().instance<CheckoutService>()
 
     route("/users") {
+        get {
+            val users = userService.getAllUsers()
+            call.respond(users)
+        }
+
         post {
             val req = call.receive<RegisterUserRequest>()
 

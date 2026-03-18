@@ -36,8 +36,16 @@ class CheckoutRepository(
                 return@inTransaction CheckoutRepositoryResult.BookNotAvailable
             }
 
-            handle.execute("UPDATE books SET available = FALSE WHERE id = :bookId", mapOf("bookId" to bookId))
-            handle.execute("INSERT INTO checkouts (user_id, book_id) VALUES (:userId, :bookId)", mapOf("userId" to userId, "bookId" to bookId))
+            handle.createUpdate("UPDATE books SET available = FALSE WHERE id = :bookId")
+                .bindMap(mapOf("bookId" to bookId))
+                .execute()
+
+            handle.createUpdate(
+                "INSERT INTO checkouts (user_id, book_id) VALUES (:userId, :bookId)"
+            )
+                .bindMap(mapOf("userId" to userId, "bookId" to bookId))
+                .execute()
+
 
             CheckoutRepositoryResult.Success(book)
         }
@@ -71,7 +79,10 @@ class CheckoutRepository(
         db.jdbi.useHandle<Exception> { handle ->
             handle.begin()
             handle.execute("UPDATE books SET available = TRUE WHERE id = :bookId", mapOf("bookId" to bookId))
-            handle.execute("DELETE FROM checkouts WHERE user_id = :userId AND book_id = :bookId", mapOf("userId" to userId, "bookId" to bookId))
+            handle.execute(
+                "DELETE FROM checkouts WHERE user_id = :userId AND book_id = :bookId",
+                mapOf("userId" to userId, "bookId" to bookId)
+            )
             handle.commit()
         }
     }

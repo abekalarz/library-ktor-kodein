@@ -32,6 +32,19 @@ class UserRepository (private val db: DatabaseFactory) {
         }
     }
 
+    fun getAllUsers(): List<User> {
+        return db.jdbi.withHandle<List<User>, Exception> { handle ->
+            handle.createQuery("SELECT id, name FROM users")
+                .map { rs, _ ->
+                    User(
+                        userId = rs.getInt("id"),
+                        name = rs.getString("name"),
+                    )
+                }
+                .list()
+        }
+    }
+
     fun deleteUser(userId: Int) {
         db.jdbi.useHandle<Exception> { handle ->
             handle.createUpdate("DELETE FROM users WHERE id = :userId")

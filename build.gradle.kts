@@ -38,6 +38,7 @@ dependencies {
     implementation("org.jdbi:jdbi3-core:3.46.0")
     implementation("org.jdbi:jdbi3-kotlin:3.46.0")
     implementation("org.jdbi:jdbi3-jackson2:3.46.0")
+    implementation("com.zaxxer:HikariCP:5.1.0")
 
     implementation("ch.qos.logback:logback-classic:1.5.12")
 

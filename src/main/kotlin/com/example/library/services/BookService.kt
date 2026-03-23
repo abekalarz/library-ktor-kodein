@@ -4,6 +4,15 @@ import com.example.library.repository.BookRepository
 
 data class Book(val id: Int, val title: String, val available: Boolean)
 
+data class CheckedOutTo(val userId: Int, val username: String)
+
+data class BookAvailabilityResponse(
+    val bookId: Int,
+    val title: String,
+    val status: String,
+    val checkedOutTo: CheckedOutTo? = null
+)
+
 sealed class DeleteBookResult {
     object Success : DeleteBookResult()
     object BookNotFound : DeleteBookResult()
@@ -14,6 +23,9 @@ class BookService(
     private val bookRepository: BookRepository
 ) {
     fun listBooks(titleFilter: String? = null): List<Book> = bookRepository.listBooks(titleFilter)
+
+    fun listBooksWithAvailability(): List<BookAvailabilityResponse> =
+        bookRepository.listBooksWithAvailability()
 
     fun addBook(title: String): Int = bookRepository.addBook(title)
 

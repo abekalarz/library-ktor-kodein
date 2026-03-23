@@ -1,3 +1,4 @@
+
 const API_URL = 'http://localhost:8080';
 
 // ============= Utility Functions =============
@@ -149,6 +150,73 @@ async function loadBooks() {
     } else {
         displayResults('books-list', result);
     }
+}
+
+async function loadBooksWithAvailability() {
+    const result = await apiCall('GET', '/books/availability');
+    const booksDiv = document.getElementById('books-list');
+
+    if (!result.success || !Array.isArray(result.data)) {
+        displayResults('books-list', result);
+        return;
+    }
+
+    booksDiv.innerHTML = '';
+
+    if (result.data.length === 0) {
+        booksDiv.innerHTML = '<p class="info">No books found</p>';
+        return;
+    }
+
+    const table = document.createElement('table');
+    table.style.cssText = 'width: 100%; border-collapse: collapse; margin-top: 10px;';
+
+    // Header row
+    const headerRow = document.createElement('tr');
+    headerRow.style.cssText = 'background: #f0f0f0; font-weight: bold;';
+    ['ID', 'Title', 'Status', 'Checked Out To'].forEach(text => {
+        const th = document.createElement('th');
+        th.style.cssText = 'padding: 10px; text-align: left; border-bottom: 2px solid #ddd;';
+        th.textContent = text;
+        headerRow.appendChild(th);
+    });
+    table.appendChild(headerRow);
+
+    result.data.forEach(book => {
+        const row = document.createElement('tr');
+        row.style.cssText = 'border-bottom: 1px solid #ddd;';
+
+        const idCell = document.createElement('td');
+        idCell.style.cssText = 'padding: 10px;';
+        idCell.textContent = `#${book.bookId}`;
+
+        const titleCell = document.createElement('td');
+        titleCell.style.cssText = 'padding: 10px;';
+        titleCell.textContent = book.title;
+
+        const statusCell = document.createElement('td');
+        statusCell.style.cssText = 'padding: 10px;';
+        const badge = document.createElement('span');
+        badge.className = book.status === 'Available' ? 'availability-badge available' : 'availability-badge checked-out';
+        badge.textContent = book.status === 'Available' ? '✅ Available' : '📖 Checked out';
+        statusCell.appendChild(badge);
+
+        const checkedOutCell = document.createElement('td');
+        checkedOutCell.style.cssText = 'padding: 10px;';
+        if (book.checkedOutTo) {
+            checkedOutCell.textContent = `#${book.checkedOutTo.userId} — ${book.checkedOutTo.username}`;
+        } else {
+            checkedOutCell.innerHTML = '<span style="color: #aaa;">—</span>';
+        }
+
+        row.appendChild(idCell);
+        row.appendChild(titleCell);
+        row.appendChild(statusCell);
+        row.appendChild(checkedOutCell);
+        table.appendChild(row);
+    });
+
+    booksDiv.appendChild(table);
 }
 
 function showAddBookForm() {

@@ -87,6 +87,10 @@ fun Route.userRoutes() {
             val title = call.request.queryParameters["title"]
             call.respond(bookService.listBooks(title))
         }
+
+        get("/availability") {
+            call.respond(bookService.listBooksWithAvailability())
+        }
     }
 
     route("/checkout") {

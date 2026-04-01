@@ -1,5 +1,6 @@
 package com.example.library.services
 
+import com.example.library.repository.CheckoutRepository
 import com.example.library.repository.UserRepository
 
 data class User(
@@ -14,7 +15,8 @@ sealed class DeleteUserResult {
 }
 
 class UserService(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val checkoutRepository: CheckoutRepository
 ) {
     fun registerUser(name: String): Int {
         return userRepository.registerUser(name)
@@ -32,15 +34,10 @@ class UserService(
         if (userRepository.getUserById(userId) == null) {
             return DeleteUserResult.UserNotFound
         }
-        return try {
-            userRepository.deleteUser(userId)
-            DeleteUserResult.Success
-        } catch (e: Exception) {
-            if (e.message?.contains("foreign key constraint", ignoreCase = true) == true) {
-                DeleteUserResult.HasActiveCheckouts
-            } else {
-                throw e
-            }
+        if (checkoutRepository.hasActiveCheckouts(userId)) {
+            return DeleteUserResult.HasActiveCheckouts
         }
+        userRepository.softDeleteUser(userId)
+        return DeleteUserResult.Success
     }
 }

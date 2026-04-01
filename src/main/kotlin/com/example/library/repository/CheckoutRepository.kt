@@ -54,7 +54,7 @@ class CheckoutRepository(
     fun isBookCheckedOutByUser(userId: Int, bookId: Int): Boolean {
         return db.jdbi.withHandle<Boolean, Exception> { handle ->
             val count = handle.createQuery(
-                "SELECT COUNT(*) FROM checkouts WHERE user_id = :userId AND book_id = :bookId"
+                "SELECT COUNT(*) FROM checkouts WHERE user_id = :userId AND book_id = :bookId AND returned_at IS NULL"
             )
                 .bind("userId", userId)
                 .bind("bookId", bookId)
@@ -67,7 +67,7 @@ class CheckoutRepository(
     fun getCheckedOutBooksCount(userId: Int): Int {
         return db.jdbi.withHandle<Int, Exception> { handle ->
             handle.createQuery(
-                "SELECT COUNT(*) FROM checkouts WHERE user_id = :userId"
+                "SELECT COUNT(*) FROM checkouts WHERE user_id = :userId AND returned_at IS NULL"
             )
                 .bind("userId", userId)
                 .mapTo(Int::class.java)
@@ -75,15 +75,29 @@ class CheckoutRepository(
         }
     }
 
-    fun returnBook(userId: Int, bookId: Int) {
-        db.jdbi.useHandle<Exception> { handle ->
-            handle.begin()
-            handle.execute("UPDATE books SET available = TRUE WHERE id = :bookId", mapOf("bookId" to bookId))
-            handle.execute(
-                "DELETE FROM checkouts WHERE user_id = :userId AND book_id = :bookId",
-                mapOf("userId" to userId, "bookId" to bookId)
+    fun hasActiveCheckouts(userId: Int): Boolean {
+        return db.jdbi.withHandle<Boolean, Exception> { handle ->
+            val count = handle.createQuery(
+                "SELECT COUNT(*) FROM checkouts WHERE user_id = :userId AND returned_at IS NULL"
             )
-            handle.commit()
+                .bind("userId", userId)
+                .mapTo(Int::class.java)
+                .one()
+            count > 0
+        }
+    }
+
+    fun returnBook(userId: Int, bookId: Int) {
+        db.jdbi.inTransaction<Unit, Exception> { handle ->
+            handle.createUpdate("UPDATE books SET available = TRUE WHERE id = :bookId")
+                .bind("bookId", bookId)
+                .execute()
+            handle.createUpdate(
+                "UPDATE checkouts SET returned_at = CURRENT_TIMESTAMP WHERE user_id = :userId AND book_id = :bookId AND returned_at IS NULL"
+            )
+                .bind("userId", userId)
+                .bind("bookId", bookId)
+                .execute()
         }
     }
 

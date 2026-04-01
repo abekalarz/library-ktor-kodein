@@ -47,7 +47,7 @@ fun main() {
             bind<UserRepository>() with singleton { UserRepository(instance()) }
             bind<CheckoutRepository>() with singleton { CheckoutRepository(instance()) }
             bind<DatabaseFactory>() with singleton { DatabaseFactory() }
-            bind<UserService>() with singleton { UserService(instance()) }
+            bind<UserService>() with singleton { UserService(instance(), instance()) }
             bind<BookService>() with singleton { BookService(instance()) }
             bind<CheckoutService>() with singleton { CheckoutService(instance(), instance(), instance()) }
         }

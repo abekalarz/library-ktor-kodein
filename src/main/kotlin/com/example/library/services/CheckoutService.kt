@@ -1,22 +1,9 @@
 package com.example.library.services
 
+import com.example.library.domain.CheckoutRepositoryResult
+import com.example.library.domain.CheckoutResult
+import com.example.library.domain.ReturnResult
 import com.example.library.repository.CheckoutRepository
-import com.example.library.repository.CheckoutRepositoryResult
-
-sealed class CheckoutResult {
-    data class Success(val message: String) : CheckoutResult()
-    data class BookNotFound(val message: String) : CheckoutResult()
-    data class BookNotAvailable(val message: String) : CheckoutResult()
-    data class UserNotFound(val message: String) : CheckoutResult()
-    data class AlreadyCheckedOut(val message: String) : CheckoutResult()
-    data class CheckoutLimitExceeded(val message: String) : CheckoutResult()
-}
-
-sealed class ReturnResult {
-    data class Success(val message: String) : ReturnResult()
-    data class BookNotFound(val message: String) : ReturnResult()
-    data class BookNotCheckedOut(val message: String) : ReturnResult()
-}
 
 class CheckoutService(
     private val checkoutRepository: CheckoutRepository,
@@ -31,7 +18,7 @@ class CheckoutService(
         if (userService.getUser(userId) == null) {
             return CheckoutResult.UserNotFound("User with ID $userId does not exist")
         }
-        
+
         if (checkoutRepository.isBookCheckedOutByUser(userId, bookId)) {
             return CheckoutResult.AlreadyCheckedOut("User $userId has already checked out this book")
         }
@@ -39,13 +26,13 @@ class CheckoutService(
         if (checkoutRepository.getCheckedOutBooksCount(userId) >= MAX_CHECKOUT_LIMIT) {
             return CheckoutResult.CheckoutLimitExceeded("User has reached the maximum limit of $MAX_CHECKOUT_LIMIT checked out books")
         }
-        
+
         return when (val result = checkoutRepository.checkoutBook(userId, bookId)) {
-            is CheckoutRepositoryResult.Success -> 
+            is CheckoutRepositoryResult.Success ->
                 CheckoutResult.Success("Book '${result.book.title}' checked out successfully!")
-            is CheckoutRepositoryResult.BookNotFound -> 
+            is CheckoutRepositoryResult.BookNotFound ->
                 CheckoutResult.BookNotFound("Book with ID $bookId does not exist in our collection")
-            is CheckoutRepositoryResult.BookNotAvailable -> 
+            is CheckoutRepositoryResult.BookNotAvailable ->
                 CheckoutResult.BookNotAvailable("Book is currently checked out and not available")
         }
     }

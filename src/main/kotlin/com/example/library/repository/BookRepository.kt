@@ -1,9 +1,10 @@
 package com.example.library.repository
 
 import com.example.library.db.DatabaseFactory
-import com.example.library.services.Book
-import com.example.library.services.BookAvailabilityResponse
-import com.example.library.services.CheckedOutTo
+import com.example.library.domain.Book
+import com.example.library.domain.BookAvailabilityResponse
+import com.example.library.domain.BookStatus
+import com.example.library.domain.User
 
 class BookRepository(
     private val db: DatabaseFactory
@@ -36,10 +37,10 @@ class BookRepository(
                 BookAvailabilityResponse(
                     bookId = rs.getInt("book_id"),
                     title = rs.getString("title"),
-                    status = if (available) "Available" else "Checked out",
-                    checkedOutTo = if (!available) CheckedOutTo(
+                    status = BookStatus.fromBoolean(available),
+                    checkedOutTo = if (!available) User(
                         userId = rs.getInt("user_id"),
-                        username = rs.getString("username")
+                        name = rs.getString("username")
                     ) else null
                 )
             }.list()

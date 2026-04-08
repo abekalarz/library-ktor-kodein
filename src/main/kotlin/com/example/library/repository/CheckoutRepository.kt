@@ -1,13 +1,8 @@
 package com.example.library.repository
 
 import com.example.library.db.DatabaseFactory
-import com.example.library.services.Book
-
-sealed class CheckoutRepositoryResult {
-    data class Success(val book: Book) : CheckoutRepositoryResult()
-    object BookNotFound : CheckoutRepositoryResult()
-    object BookNotAvailable : CheckoutRepositoryResult()
-}
+import com.example.library.domain.Book
+import com.example.library.domain.CheckoutRepositoryResult
 
 class CheckoutRepository(
     private val db: DatabaseFactory

@@ -1,19 +1,17 @@
 package com.example.library.services
 
+import com.example.library.domain.Book
+import com.example.library.domain.BookAvailabilityResponse
+import com.example.library.domain.DeleteBookResult
 import com.example.library.repository.BookRepository
-
-data class Book(val id: Int, val title: String, val available: Boolean)
-
-sealed class DeleteBookResult {
-    object Success : DeleteBookResult()
-    object BookNotFound : DeleteBookResult()
-    object BookIsCheckedOut : DeleteBookResult()
-}
 
 class BookService(
     private val bookRepository: BookRepository
 ) {
     fun listBooks(titleFilter: String? = null): List<Book> = bookRepository.listBooks(titleFilter)
+
+    fun listBooksWithAvailability(): List<BookAvailabilityResponse> =
+        bookRepository.listBooksWithAvailability()
 
     fun addBook(title: String): Int = bookRepository.addBook(title)
 

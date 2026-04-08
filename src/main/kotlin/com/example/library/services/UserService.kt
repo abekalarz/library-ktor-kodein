@@ -1,17 +1,8 @@
 package com.example.library.services
 
+import com.example.library.domain.DeleteUserResult
+import com.example.library.domain.User
 import com.example.library.repository.UserRepository
-
-data class User(
-    val userId: Int,
-    val name: String
-)
-
-sealed class DeleteUserResult {
-    object Success : DeleteUserResult()
-    object UserNotFound : DeleteUserResult()
-    object HasActiveCheckouts : DeleteUserResult()
-}
 
 class UserService(
     private val userRepository: UserRepository

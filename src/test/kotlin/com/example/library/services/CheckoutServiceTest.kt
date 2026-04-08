@@ -1,7 +1,11 @@
 package com.example.library.services
 
+import com.example.library.domain.Book
+import com.example.library.domain.CheckoutRepositoryResult
+import com.example.library.domain.CheckoutResult
+import com.example.library.domain.ReturnResult
+import com.example.library.domain.User
 import com.example.library.repository.CheckoutRepository
-import com.example.library.repository.CheckoutRepositoryResult
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Nested

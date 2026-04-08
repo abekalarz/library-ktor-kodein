@@ -1,7 +1,8 @@
 package com.example.library.routes
 
+import com.example.library.domain.AddBookRequest
+import com.example.library.domain.DeleteBookResult
 import com.example.library.services.BookService
-import com.example.library.services.DeleteBookResult
 import com.example.library.validation.Validators
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -10,8 +11,6 @@ import io.ktor.server.request.*
 import io.ktor.server.routing.*
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
-
-data class AddBookRequest(val title: String)
 
 fun Route.adminRoutes() {
     val bookService by closestDI().instance<BookService>()

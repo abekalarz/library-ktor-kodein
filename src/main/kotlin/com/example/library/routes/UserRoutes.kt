@@ -1,11 +1,14 @@
 package com.example.library.routes
 
+import com.example.library.domain.CheckoutRequest
+import com.example.library.domain.CheckoutResult
+import com.example.library.domain.DeleteUserResult
+import com.example.library.domain.RegisterUserRequest
+import com.example.library.domain.ReturnRequest
+import com.example.library.domain.ReturnResult
 import com.example.library.services.BookService
 import com.example.library.services.CheckoutService
-import com.example.library.services.CheckoutResult
-import com.example.library.services.ReturnResult
 import com.example.library.services.UserService
-import com.example.library.services.DeleteUserResult
 import com.example.library.api.ErrorResponse
 import com.example.library.validation.Validators
 import io.ktor.http.*
@@ -15,10 +18,6 @@ import io.ktor.server.request.*
 import io.ktor.server.routing.*
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
-
-data class RegisterUserRequest(val name: String)
-data class CheckoutRequest(val userId: Int, val bookId: Int)
-data class ReturnRequest(val userId: Int, val bookId: Int)
 
 fun Route.userRoutes() {
     val userService by closestDI().instance<UserService>()
@@ -86,6 +85,10 @@ fun Route.userRoutes() {
         get {
             val title = call.request.queryParameters["title"]
             call.respond(bookService.listBooks(title))
+        }
+
+        get("/availability") {
+            call.respond(bookService.listBooksWithAvailability())
         }
     }
 

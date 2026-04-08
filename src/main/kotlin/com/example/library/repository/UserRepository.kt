@@ -1,12 +1,12 @@
 package com.example.library.repository
 
 import com.example.library.db.DatabaseFactory
-import com.example.library.services.User
+import com.example.library.domain.User
 
 class UserRepository (private val db: DatabaseFactory) {
     fun registerUser(name: String): Int {
         require(name.isNotBlank()) { "User name cannot be empty" }
-        
+
         return db.jdbi.withHandle<Int, Exception> { handle ->
             handle.createUpdate("INSERT INTO users (name) VALUES (:name)")
                 .bind("name", name)
@@ -55,3 +55,4 @@ class UserRepository (private val db: DatabaseFactory) {
         }
     }
 }
+

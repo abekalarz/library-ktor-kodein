@@ -19,7 +19,7 @@ class UserRepository (private val db: DatabaseFactory) {
 
     fun getUserById(userId: Int): User? {
         return db.jdbi.withHandle<User?, Exception> { handle ->
-            handle.createQuery("SELECT id, name FROM users WHERE id = :userId")
+            handle.createQuery("SELECT id, name FROM users WHERE id = :userId AND is_active = TRUE")
                 .bind("userId", userId)
                 .map { rs, _ ->
                     User(
@@ -34,7 +34,7 @@ class UserRepository (private val db: DatabaseFactory) {
 
     fun getAllUsers(): List<User> {
         return db.jdbi.withHandle<List<User>, Exception> { handle ->
-            handle.createQuery("SELECT id, name FROM users")
+            handle.createQuery("SELECT id, name FROM users WHERE is_active = TRUE")
                 .map { rs, _ ->
                     User(
                         userId = rs.getInt("id"),
@@ -45,11 +45,14 @@ class UserRepository (private val db: DatabaseFactory) {
         }
     }
 
-    fun deleteUser(userId: Int) {
+    fun softDeleteUser(userId: Int) {
         db.jdbi.useHandle<Exception> { handle ->
-            handle.createUpdate("DELETE FROM users WHERE id = :userId")
+            handle.createUpdate(
+                "UPDATE users SET is_active = FALSE, deleted_at = CURRENT_TIMESTAMP WHERE id = :userId"
+            )
                 .bind("userId", userId)
                 .execute()
         }
     }
 }
+

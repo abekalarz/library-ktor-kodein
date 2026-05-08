@@ -3,6 +3,7 @@ package com.example.library.repository
 import com.example.library.db.DatabaseFactory
 import com.example.library.domain.Book
 import com.example.library.domain.CheckoutRepositoryResult
+import org.jdbi.v3.core.Handle
 
 class CheckoutRepository(
     private val db: DatabaseFactory
@@ -70,9 +71,9 @@ class CheckoutRepository(
         }
     }
 
-    fun hasActiveCheckouts(userId: Int): Boolean {
-        return db.jdbi.withHandle<Boolean, Exception> { handle ->
-            val count = handle.createQuery(
+    fun hasActiveCheckouts(userId: Int, handle: Handle? = null): Boolean {
+        val query = { h: Handle ->
+            val count = h.createQuery(
                 "SELECT COUNT(*) FROM checkouts WHERE user_id = :userId AND returned_at IS NULL"
             )
                 .bind("userId", userId)
@@ -80,6 +81,8 @@ class CheckoutRepository(
                 .one()
             count > 0
         }
+
+        return handle?.let(query) ?: db.jdbi.withHandle<Boolean, Exception>(query)
     }
 
     fun returnBook(userId: Int, bookId: Int) {

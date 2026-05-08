@@ -2,6 +2,7 @@ package com.example.library.repository
 
 import com.example.library.db.DatabaseFactory
 import com.example.library.domain.User
+import org.jdbi.v3.core.Handle
 
 class UserRepository (private val db: DatabaseFactory) {
     fun registerUser(name: String): Int {
@@ -17,9 +18,9 @@ class UserRepository (private val db: DatabaseFactory) {
         }
     }
 
-    fun getUserById(userId: Int): User? {
-        return db.jdbi.withHandle<User?, Exception> { handle ->
-            handle.createQuery("SELECT id, name FROM users WHERE id = :userId AND is_active = TRUE")
+    fun getUserById(userId: Int, handle: Handle? = null): User? {
+        val query = { h: Handle ->
+            h.createQuery("SELECT id, name FROM users WHERE id = :userId AND is_active = TRUE")
                 .bind("userId", userId)
                 .map { rs, _ ->
                     User(
@@ -30,6 +31,8 @@ class UserRepository (private val db: DatabaseFactory) {
                 .findFirst()
                 .orElse(null)
         }
+
+        return handle?.let(query) ?: db.jdbi.withHandle<User?, Exception>(query)
     }
 
     fun getAllUsers(): List<User> {
@@ -45,14 +48,15 @@ class UserRepository (private val db: DatabaseFactory) {
         }
     }
 
-    fun softDeleteUser(userId: Int) {
-        db.jdbi.useHandle<Exception> { handle ->
-            handle.createUpdate(
+    fun softDeleteUser(userId: Int, handle: Handle? = null) {
+        val update = { h: Handle ->
+            h.createUpdate(
                 "UPDATE users SET is_active = FALSE, deleted_at = CURRENT_TIMESTAMP WHERE id = :userId"
             )
                 .bind("userId", userId)
                 .execute()
         }
+
+        handle?.let(update) ?: db.jdbi.withHandle<Int, Exception>(update)
     }
 }
-

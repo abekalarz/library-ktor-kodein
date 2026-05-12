@@ -2,6 +2,8 @@ package com.example.library.services
 
 import com.example.library.db.TransactionManager
 import com.example.library.domain.DeleteUserResult
+import com.example.library.domain.RegisterUserRequest
+import com.example.library.domain.RegisterUserResult
 import com.example.library.domain.User
 import com.example.library.repository.CheckoutRepository
 import com.example.library.repository.UserRepository
@@ -12,8 +14,18 @@ class UserService(
     private val checkoutRepository: CheckoutRepository,
     private val transactionManager: TransactionManager
 ) {
-    fun registerUser(name: String): Int {
-        return userRepository.registerUser(name)
+    fun registerUser(userRequest: RegisterUserRequest): RegisterUserResult {
+        val existingUser = userRepository.getUserByUsername(userRequest.username)
+        if(existingUser != null) {
+            return RegisterUserResult.DuplicateUsername
+        }
+
+        val registeredUser = userRepository.registerUser(userRequest)
+        if (registeredUser == 1) {
+            return RegisterUserResult.Success
+        }
+
+        return RegisterUserResult.Failure
     }
 
     fun getUser(userId: Int): User? {

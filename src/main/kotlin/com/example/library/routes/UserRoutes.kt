@@ -43,7 +43,7 @@ fun Route.userRoutes() {
                 return@post
             }
 
-            val userId = userService.registerUser(req.name)
+            val userId = userService.registerUser(req)
             call.respondText("User registered: ${req.name} (ID: $userId)")
         }
 

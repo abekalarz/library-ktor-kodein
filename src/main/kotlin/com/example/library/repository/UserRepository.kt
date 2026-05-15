@@ -11,7 +11,7 @@ class UserRepository (private val db: DatabaseFactory) {
 //        require(userRequest.isNotBlank()) { "User name cannot be empty" }
 
         return db.jdbi.withHandle<Int, Exception> { handle ->
-            handle.createUpdate("INSERT INTO users (name) VALUES (:name)")
+            handle.createUpdate("INSERT INTO users (name, surname, username) VALUES (:name, :surname, :username)")
                 .bind("name", userRequest.name)
                 .bind("surname", userRequest.surname)
                 .bind("username", userRequest.username)
@@ -42,12 +42,25 @@ class UserRepository (private val db: DatabaseFactory) {
     }
 
     fun getUserByUsername(username: String): User? {
-        TODO("Not yet implemented")
+        return db.jdbi.withHandle<User?, Exception> { handle ->
+            handle.createQuery("SELECT id, name, surname, username FROM users WHERE username = :username AND is_active = TRUE")
+                .bind("username", username)
+                .map { rs, _ ->
+                    User(
+                        userId = rs.getInt("id"),
+                        name = rs.getString("name"),
+                        surname = rs.getString("surname"),
+                        username = rs.getString("username"),
+                    )
+                }
+                .findFirst()
+                .orElse(null)
+        }
     }
 
     fun getAllUsers(): List<User> {
         return db.jdbi.withHandle<List<User>, Exception> { handle ->
-            handle.createQuery("SELECT id, name FROM users WHERE is_active = TRUE")
+            handle.createQuery("SELECT id, name, surname, username FROM users WHERE is_active = TRUE")
                 .map { rs, _ ->
                     User(
                         userId = rs.getInt("id"),

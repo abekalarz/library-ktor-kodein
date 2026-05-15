@@ -36,6 +36,8 @@ fun Route.userRoutes() {
 
             val errors = listOfNotNull(
                 Validators.notBlank("name", req.name),
+                Validators.notBlank("surname", req.surname), // minLenght to add
+                Validators.notBlank("username", req.username), // minLenngth to add
                 Validators.minLength("name", req.name, 2)
             )
 

@@ -246,26 +246,25 @@ async function addBook() {
 // ============= Users =============
 async function registerUser() {
     const name = document.getElementById('user-name').value;
+    const surname = document.getElementById('user-surname').value;
+    const username = document.getElementById('user-username').value;
 
-    if (!name.trim()) {
-        log('⚠️ Please enter a user name');
+    if (!name.trim() || !surname.trim() || !username.trim()) {
+        log('⚠️ Please fill in all fields');
         return;
     }
 
-    const result = await apiCall('POST', '/users', { name });
+    const result = await apiCall('POST', '/users', { name, surname, username });
     if (result.success) {
         log('✅ User registered successfully');
         document.getElementById('user-name').value = '';
+        document.getElementById('user-surname').value = '';
+        document.getElementById('user-username').value = '';
         
-        // Extract user ID from response like "User registered: Adam12345 (ID: 123)"
-        const match = result.data.match(/ID:\s*(\d+)/);
-        if (match) {
-            const userId = match[1];
-            document.getElementById('user-id-query').value = userId;
-            showUserRegistrationResult(result.data, userId);
-        } else {
-            showUserRegistrationResult(result.data, null);
-        }
+        showUserRegistrationResult('User registered: ${name} (${username})', null);
+    }else if (result.data && typeof result.data === 'string' && result.data.includes('already taken')) {
+        const resultDiv = document.getElementById('user-registration-result');
+        resultDiv.innerHTML = `<p class="error">❌ ${result.data}</p>`;
     }
 }
 
@@ -326,8 +325,12 @@ async function loadAllUsers() {
         idCell.textContent = `#${user.userId}`;
         
         const nameCell = document.createElement('td');
-        nameCell.style.cssText = 'padding: 10px; text-align: left; flex-grow: 1;';
-        nameCell.textContent = user.name;
+        nameCell.style.cssText = 'padding: 10px; text-align: left;';
+        nameCell.textContent = `${user.name} ${user.surname}`;
+
+        const usernameCell = document.createElement('td');
+        usernameCell.style.cssText = 'padding: 10px; text-align: left; color: #666;';
+        usernameCell.textContent = `@${user.username}`;
         
         const actionCell = document.createElement('td');
         actionCell.style.cssText = 'padding: 10px; text-align: right;';
@@ -337,6 +340,7 @@ async function loadAllUsers() {
         
         row.appendChild(idCell);
         row.appendChild(nameCell);
+        row.appendChild(usernameCell)
         row.appendChild(actionCell);
         table.appendChild(row);
     });

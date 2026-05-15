@@ -38,7 +38,7 @@ class BookServiceTest {
 
         @Test
         fun `listBooksWithAvailability - when book is checked out then return response with CHECKED_OUT status`() {
-            val checkedOutUser = User(userId = 2, name = "John Doe")
+            val checkedOutUser = User(userId = 2, name = "John", surname = "Doe", username = "johndoe")
             val checkedOutBook = BookAvailabilityResponse(
                 bookId = 1,
                 title = "Clean Code",

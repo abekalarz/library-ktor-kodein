@@ -24,7 +24,7 @@ class UserRepository (private val db: DatabaseFactory) {
 
     fun getUserById(userId: Int, handle: Handle? = null): User? {
         val query = { h: Handle ->
-            h.createQuery("SELECT id, name FROM users WHERE id = :userId AND is_active = TRUE")
+            h.createQuery("SELECT id, name, surname, username FROM users WHERE id = :userId AND is_active = TRUE")
                 .bind("userId", userId)
                 .map { rs, _ ->
                     User(

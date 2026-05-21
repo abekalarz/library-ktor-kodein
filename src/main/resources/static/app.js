@@ -261,7 +261,7 @@ async function registerUser() {
         document.getElementById('user-surname').value = '';
         document.getElementById('user-username').value = '';
         
-        showUserRegistrationResult('User registered: ${name} (${username})', null);
+        showUserRegistrationResult(`User registered: ${name} (${username})`, null);
     }else if (result.data && typeof result.data === 'string' && result.data.includes('already taken')) {
         const resultDiv = document.getElementById('user-registration-result');
         resultDiv.innerHTML = `<p class="error">❌ ${result.data}</p>`;

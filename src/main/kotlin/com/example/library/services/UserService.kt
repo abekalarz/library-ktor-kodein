@@ -21,7 +21,7 @@ class UserService(
         }
 
         val registeredUser = userRepository.registerUser(userRequest)
-        if (registeredUser == 1) {
+        if (registeredUser > 0) {
             return RegisterUserResult.Success
         }
 

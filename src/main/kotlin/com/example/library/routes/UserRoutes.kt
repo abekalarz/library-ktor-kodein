@@ -10,6 +10,7 @@ import com.example.library.services.BookService
 import com.example.library.services.CheckoutService
 import com.example.library.services.UserService
 import com.example.library.api.ErrorResponse
+import com.example.library.domain.RegisterUserResult
 import com.example.library.validation.Validators
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -35,6 +36,8 @@ fun Route.userRoutes() {
 
             val errors = listOfNotNull(
                 Validators.notBlank("name", req.name),
+                Validators.notBlank("surname", req.surname), // minLenght to add
+                Validators.notBlank("username", req.username), // minLenngth to add
                 Validators.minLength("name", req.name, 2)
             )
 
@@ -43,8 +46,17 @@ fun Route.userRoutes() {
                 return@post
             }
 
-            val userId = userService.registerUser(req.name)
-            call.respondText("User registered: ${req.name} (ID: $userId)")
+            when (userService.registerUser(req)) {
+                is RegisterUserResult.DuplicateUsername -> call.respondText(
+                    "Username '${req.username}' is already taken",
+                    status = HttpStatusCode.Conflict
+                )
+                is RegisterUserResult.Success -> call.respondText("User registered: ${req.name} (${req.username})")
+                is RegisterUserResult.Failure -> call.respondText(
+                    "Failed to register user",
+                    status = HttpStatusCode.InternalServerError
+                )
+            }
         }
 
         get("/{userId}") {

@@ -44,7 +44,7 @@ class CheckoutServiceTest {
 
         @Test
         fun `checkoutBook - when book already checked out by user then return AlreadyCheckedOut`() {
-            every { userService.getUser(userId) } returns User(userId, "Sample User")
+            every { userService.getUser(userId) } returns User(userId, "Sample","User", "UserName")
             every { checkoutRepository.isBookCheckedOutByUser(userId, bookId) } returns true
 
             val result = checkoutService.checkoutBook(userId, bookId)
@@ -56,7 +56,7 @@ class CheckoutServiceTest {
 
         @Test
         fun `checkoutBook - repository result success then return success`() {
-            every { userService.getUser(userId) } returns User(userId, "Sample User")
+            every { userService.getUser(userId) } returns User(userId, "Sample","User", "UserName")
             every { checkoutRepository.isBookCheckedOutByUser(userId, bookId) } returns false
             every { checkoutRepository.getCheckedOutBooksCount(userId) } returns 0
             every { checkoutRepository.checkoutBook(userId, bookId) } returns
@@ -71,7 +71,7 @@ class CheckoutServiceTest {
 
         @Test
         fun `checkoutBook - when book is not found then return BookNotFound`() {
-            every { userService.getUser(userId) } returns User(userId, "Sample User")
+            every { userService.getUser(userId) } returns User(userId, "Sample","User", "UserName")
             every { checkoutRepository.isBookCheckedOutByUser(userId, bookId) } returns false
             every { checkoutRepository.getCheckedOutBooksCount(userId) } returns 0
             every { checkoutRepository.checkoutBook(userId, bookId) } returns
@@ -85,7 +85,7 @@ class CheckoutServiceTest {
 
         @Test
         fun `checkoutBook - when book is not available then return BookNotAvailable`() {
-            every { userService.getUser(userId) } returns User(userId, "Sample User")
+            every { userService.getUser(userId) } returns User(userId, "Sample","User", "UserName")
             every { checkoutRepository.isBookCheckedOutByUser(userId, bookId) } returns false
             every { checkoutRepository.getCheckedOutBooksCount(userId) } returns 0
             every { checkoutRepository.checkoutBook(userId, bookId) } returns
@@ -99,7 +99,7 @@ class CheckoutServiceTest {
 
         @Test
         fun `checkoutBook - when user reached checkout limit then return CheckoutLimitExceeded`() {
-            every { userService.getUser(userId) } returns User(userId, "Sample User")
+            every { userService.getUser(userId) } returns User(userId, "Sample","User", "UserName")
             every { checkoutRepository.isBookCheckedOutByUser(userId, bookId) } returns false
             every { checkoutRepository.getCheckedOutBooksCount(userId) } returns 5
 

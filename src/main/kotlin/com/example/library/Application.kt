@@ -1,6 +1,8 @@
 package com.example.library
 
 import com.example.library.db.DatabaseFactory
+import com.example.library.db.JdbiTransactionManager
+import com.example.library.db.TransactionManager
 import com.example.library.repository.BookRepository
 import com.example.library.repository.CheckoutRepository
 import com.example.library.repository.UserRepository
@@ -47,7 +49,8 @@ fun main() {
             bind<UserRepository>() with singleton { UserRepository(instance()) }
             bind<CheckoutRepository>() with singleton { CheckoutRepository(instance()) }
             bind<DatabaseFactory>() with singleton { DatabaseFactory() }
-            bind<UserService>() with singleton { UserService(instance()) }
+            bind<TransactionManager>() with singleton { JdbiTransactionManager(instance()) }
+            bind<UserService>() with singleton { UserService(instance(), instance(), instance()) }
             bind<BookService>() with singleton { BookService(instance()) }
             bind<CheckoutService>() with singleton { CheckoutService(instance(), instance(), instance()) }
         }

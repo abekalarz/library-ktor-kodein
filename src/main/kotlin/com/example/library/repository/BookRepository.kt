@@ -40,7 +40,9 @@ class BookRepository(
                     status = BookStatus.fromBoolean(available),
                     checkedOutTo = if (!available) User(
                         userId = rs.getInt("user_id"),
-                        name = rs.getString("username")
+                        name = rs.getString("name"),
+                        surname = rs.getString("surname"),
+                        username = rs.getString("username"),
                     ) else null
                 )
             }.list()

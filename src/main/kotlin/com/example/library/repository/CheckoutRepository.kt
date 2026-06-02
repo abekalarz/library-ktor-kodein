@@ -60,29 +60,17 @@ class CheckoutRepository(
         }
     }
 
-    fun getCheckedOutBooksCount(userId: Int): Int {
-        return db.jdbi.withHandle<Int, Exception> { handle ->
-            handle.createQuery(
-                "SELECT COUNT(*) FROM checkouts WHERE user_id = :userId AND returned_at IS NULL"
-            )
-                .bind("userId", userId)
-                .mapTo(Int::class.java)
-                .one()
-        }
-    }
-
-    fun hasActiveCheckouts(userId: Int, handle: Handle? = null): Boolean {
+    fun getCheckedOutBooksCount(userId: Int, handle: Handle? = null): Int {
         val query = { h: Handle ->
-            val count = h.createQuery(
+            h.createQuery(
                 "SELECT COUNT(*) FROM checkouts WHERE user_id = :userId AND returned_at IS NULL"
             )
                 .bind("userId", userId)
                 .mapTo(Int::class.java)
                 .one()
-            count > 0
         }
 
-        return handle?.let(query) ?: db.jdbi.withHandle<Boolean, Exception>(query)
+        return handle?.let(query) ?: db.jdbi.withHandle<Int, Exception>(query)
     }
 
     fun returnBook(userId: Int, bookId: Int) {

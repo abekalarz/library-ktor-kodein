@@ -41,7 +41,7 @@ class UserService(
             if (userRepository.getUserById(userId, handle) == null) {
                 return DeleteUserResult.UserNotFound
             }
-            if (checkoutRepository.hasActiveCheckouts(userId, handle)) {
+            if (checkoutRepository.getCheckedOutBooksCount(userId, handle) > NO_CHECKOUTS_COUNT) {
                 return DeleteUserResult.HasActiveCheckouts
             }
             userRepository.softDeleteUser(userId, handle)
@@ -49,5 +49,9 @@ class UserService(
         }
         
         return transactionManager.inTransaction(::perform)
+    }
+
+    companion object {
+        const val NO_CHECKOUTS_COUNT = 0
     }
 }

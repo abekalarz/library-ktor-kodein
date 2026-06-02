@@ -85,7 +85,14 @@ fun Route.userRoutes() {
                 return@delete
             }
 
-            when (userService.deleteUser(userId!!)) {
+            val delresults = try {
+                userService.deleteUser(userId!!)
+            } catch (e: Exception) {
+                println("Error deleting user: ${e.message}")
+                return@delete
+            }
+
+            when (delresults) {
                 is DeleteUserResult.Success -> call.respondText("User $userId deleted successfully")
                 is DeleteUserResult.UserNotFound -> call.respondText("User with ID $userId does not exist", status = HttpStatusCode.NotFound)
                 is DeleteUserResult.HasActiveCheckouts -> call.respondText("Cannot delete user with active checkouts", status = HttpStatusCode.Conflict)
